@@ -1,0 +1,242 @@
+<h1>OpenAsar Config</h1>
+<h2><img src="https://twitter.github.io/twemoji/v/14.0.0/svg/1f44b.svg"> Welcome to OpenAsar, you can configure its features here</h2>
+<div id="container"></div>
+
+<footer>
+  <button id="b_restart">Restart</button>
+  <button id="b_close">Close</button>
+</footer>
+
+<style>
+  :root {
+    --background-primary: #101418;
+    --background-secondary: #202428;
+    --background-tertiary: #303438;
+    --accent: #5865F2;
+
+    --foreground-primary: rgba(255, 255, 255, 0.97);
+    --foreground-muted: rgba(255, 255, 255, 0.77);
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500;600&display=swap');
+
+  * {
+    font-family: 'Roboto', sans-serif;
+    color: var(--foreground-primary);
+    user-select: none;
+  }
+
+  body {
+    margin: 4vh 4vw;
+    background: var(--background-primary);
+  }
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.switch.on {
+  background-color: var(--accent);
+}
+
+.switch, .switch div {
+  border-radius: 1em;
+}
+
+.switch {
+  transition: background-color .2s;
+
+  display: inline-block;
+  font-size: 18px;
+  height: 18.5px;
+  width: 36px;
+  background-color: var(--background-tertiary);
+
+  display: flex;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.switch div {
+  margin-left: 2px;
+
+  height: 13.5px;
+  width: 14px;
+  background: #ddd;
+  box-shadow: 0 0.1em 0.3em rgba(0, 0, 0, 0.4);
+  transition: all 300ms;
+}
+
+.switch input:checked + div {
+  transform: translateX(17px);
+}
+
+#container > div {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+}
+
+#container > div > :first-child {
+  margin-bottom: 4px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+#container > div > :nth-child(2) {
+  color: var(--foreground-muted);
+  font-size: 14px;
+}
+
+select, option {
+  background: var(--background-secondary);
+  border: 2px solid var(--background-tertiary);
+  padding: 3px;
+  font-weight: 500;
+  width: 110px;
+  border-radius: 4px;
+}
+
+.switch, select {
+  float: right;
+  line-height: 18px;
+}
+
+footer {
+  display: flex;
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+  width: 90%;
+  justify-content: space-around;
+}
+
+button {
+  background: var(--accent);
+  border: 0;
+  padding: 6px 30px;
+  font-size: 20px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+h1 {
+  font-size: 22px;
+  margin: 0;
+}
+
+h2 {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 30px;
+}
+
+img {
+  width: 18px;
+  position: relative;
+  top: 3px;
+}
+
+svg {
+  position: relative;
+  top: 4px;
+}
+
+b {
+  font-weight: 600;
+}
+</style>
+
+<script>
+  const config = Native.get();
+  const toggles = [
+    [ 'Focus', 'Which aspect of the client to focus on', 'cmdPreset', [ 'performance', 'battery life', 'balanced' ] ],
+    [ 'Splash Theming', 'Themes splash screen the same as your client mod\'s', 'themeSync', true ],
+    [ '<svg width="22" height="22" viewBox="0 0 16 16"><path style="fill: currentColor" fill-rule="evenodd" d="M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458L5 5.782zM9.5 2.5h-3V6a.75.75 0 0 1-.117.403L4.73 9h6.54L9.617 6.403A.75.75 0 0 1 9.5 6V2.5zm-6.9 9.847L3.775 10.5h8.45l1.175 1.847a.75.75 0 0 1-.633 1.153H3.233a.75.75 0 0 1-.633-1.153z"/></svg> Quickstart', '<b>Experimental</b>: Makes Discord start faster by skipping some steps like update checking on start', 'quickstart', false ],
+    [ 'Multi Instance', 'Allows Discord to have multiple instances', 'multiInstance', false ],
+    [ 'OpenAsar Autoupdate', 'Automatically updates OpenAsar after each start', 'autoupdate', true ]
+  ];
+
+  const makeSwitch = (listener, initial = false) => {
+    const switchEl = document.createElement('label');
+    switchEl.className = 'switch';
+    if (initial) switchEl.classList.add('on');
+    
+    const switchInputChildEl = document.createElement('input');
+    switchInputChildEl.type = 'checkbox';
+    switchInputChildEl.checked = initial;
+    
+    switchInputChildEl.onchange = () => {
+      const value = switchInputChildEl.checked;
+      
+      setTimeout(() => {
+        if (value) switchEl.classList.add('on');
+        else switchEl.classList.remove('on');
+      }, 160);
+
+      listener(value);
+    };
+    
+    switchEl.appendChild(switchInputChildEl);
+    
+    const switchDivChildEl = document.createElement('div');
+    switchEl.appendChild(switchDivChildEl);
+    
+    return switchEl;
+  };
+
+  const makeDropdown = (listener, opts) => {
+    const dropdownEl = document.createElement('select');
+
+    for (const opt of opts) {
+      const el = document.createElement('option');
+      el.textContent = opt[0].toUpperCase() + opt.slice(1);
+      el.value = opt;
+
+      dropdownEl.append(el);
+    }
+
+    dropdownEl.onchange = () => {
+      listener(dropdownEl.value);
+    };
+
+    return dropdownEl;
+  };
+
+  const makeItem = ([ name, desc, key, def ]) => {
+    const el = document.createElement('div');
+
+    const nameEl = document.createElement('div');
+    nameEl.innerHTML = name;
+
+    const descEl = document.createElement('div');
+    descEl.innerHTML = desc;
+
+    const switchEl = typeof def === 'boolean' ? makeSwitch((v) => {
+      config[key] = v;
+      Native.set(config);
+    }, config[key] ?? def) : makeDropdown((v) => {
+      const lookup = {
+        'performance': 'perf',
+        'battery life': 'battery'
+      };
+
+      config[key] = lookup[v] ?? v;
+      Native.set(config);
+    }, def);
+
+    nameEl.append(switchEl);
+    el.append(nameEl, descEl);
+
+    return el;
+  };
+
+  container.append(...toggles.map(makeItem));
+
+  b_restart.onclick = () => Native.restart();
+  b_close.onclick = () => window.close();
+</script>

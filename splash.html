@@ -1,4 +1,4 @@
-<video loop autoplay src="https://cdn.openasar.dev/discord_loading.webm"></video>
+<video id="video" loop autoplay src="https://cdn.openasar.dev/discord_loading.webm"></video>
 
 <div id="text">Starting...</div>
 
@@ -99,6 +99,8 @@
 </style>
 
 <script>
+  video.play(); // Try and force autoplay more
+
   Splash.onState(({ status, current, total, progress, seconds }) => {
     let statusText = status.replaceAll('-', ' ');
     let showProgress = false;

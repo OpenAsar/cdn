@@ -114,6 +114,21 @@
 
       case 'fail': // Custom for update failure, include retry and reorder text
         statusText = `Update Failed - Retrying in ${seconds}`;
+
+        const i = setInterval(() => {
+          if (!text.textContent.includes('Failed')) return clearInterval(i);
+
+          const spl = text.textContent.split(' ');
+          const sec = parseInt(spl.pop()) - 1;
+
+          if (sec <= 0) {
+            text.textContent = 'checking for updates';
+            return clearInterval(i);
+          }
+
+          text.textContent = spl.concat(sec).join(' ')
+        }, 1000);
+
         break;
     }
 

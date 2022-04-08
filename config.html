@@ -153,13 +153,21 @@ b {
 </style>
 
 <script>
+
+  const experimental = (arr) => {
+    arr[0] = `<svg width="22" height="22" viewBox="0 0 16 16"><path style="fill: currentColor" fill-rule="evenodd" d="M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458L5 5.782zM9.5 2.5h-3V6a.75.75 0 0 1-.117.403L4.73 9h6.54L9.617 6.403A.75.75 0 0 1 9.5 6V2.5zm-6.9 9.847L3.775 10.5h8.45l1.175 1.847a.75.75 0 0 1-.633 1.153H3.233a.75.75 0 0 1-.633-1.153z"/></svg> ` + arr[0];
+    arr[1] = `<b>Experimental</b>: ` + arr[1];
+
+    return arr;
+  };
+
   const config = Native.get();
   const toggles = [
     [ 'Focus', 'Which aspect of the client to focus on', 'cmdPreset', [ 'performance', 'battery life', 'balanced' ] ],
+    [ 'No Track', 'Disables Discord\'s tracking / analytics (Sentry, science)', 'noTrack', true ],
     [ 'Splash Theming', 'Themes splash screen the same as your client mod\'s', 'themeSync', true ],
-    [ '<svg width="22" height="22" viewBox="0 0 16 16"><path style="fill: currentColor" fill-rule="evenodd" d="M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458L5 5.782zM9.5 2.5h-3V6a.75.75 0 0 1-.117.403L4.73 9h6.54L9.617 6.403A.75.75 0 0 1 9.5 6V2.5zm-6.9 9.847L3.775 10.5h8.45l1.175 1.847a.75.75 0 0 1-.633 1.153H3.233a.75.75 0 0 1-.633-1.153z"/></svg> Quickstart', '<b>Experimental</b>: Makes Discord start faster by skipping some steps like update checking on start', 'quickstart', false ],
-    [ 'Multi Instance', 'Allows Discord to have multiple instances', 'multiInstance', false ],
-    [ 'OpenAsar Autoupdate', 'Automatically updates OpenAsar after each start', 'autoupdate', true ]
+    experimental([ 'Quickstart', 'Makes Discord start faster by skipping some steps like update checking on start', 'quickstart', false ]),
+    experimental([ 'Multi Instance', 'Allows Discord to have multiple instances / windows open at once', 'multiInstance', false ]),
   ];
 
   const makeSwitch = (listener, initial = false) => {

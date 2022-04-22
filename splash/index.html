@@ -167,7 +167,7 @@
         text.style.textTransform = 'unset';
         statusText = 'Discord update available:';
 
-        manualVersion.textContent = `version ${name} | released ${days > 1 ? (days + ' days ago') : (hours + ' hours ago')}`;
+        manualVersion.innerHTML = `version ${name} | <span style="color: hsl(359,${((hours / 200) * 100).toFixed(2)}%,59.4%);">released ${days >= 1 ? (days + ' days ago') : (hours + ' hours ago')}</span>`;
 
         manual.style.display = 'flex';
 

@@ -166,7 +166,7 @@ b {
   const config = Native.get();
   // const config = {};
   const toggles = [
-    [ 'Focus', 'Which aspect of the client to focus on', 'cmdPreset', [ 'performance', 'battery life', 'balanced' ] ],
+    [ 'Focus', 'Which aspect of the client to focus on', 'cmdPreset', [ 'performance', 'battery life', 'balanced' ], config.cmdPreset ],
     [ 'No Track', 'Disables Discord\'s tracking / analytics / telemetry (Sentry, science)', 'noTrack', true ],
     [ 'Splash Theming', 'Themes splash screen the same as your client mod\'s', 'themeSync', true ],
     experimental([ 'Quickstart', 'Makes Discord start faster by skipping some steps like update checking on start', 'quickstart', false ]),
@@ -201,13 +201,15 @@ b {
     return switchEl;
   };
 
-  const makeDropdown = (listener, opts) => {
+  const makeDropdown = (listener, opts, def) => {
     const dropdownEl = document.createElement('select');
 
     for (const opt of opts) {
       const el = document.createElement('option');
       el.textContent = opt[0].toUpperCase() + opt.slice(1);
       el.value = opt;
+
+      if (opt === def) el.selected = true;
 
       dropdownEl.append(el);
     }
@@ -219,7 +221,7 @@ b {
     return dropdownEl;
   };
 
-  const makeItem = ([ name, desc, key, def ]) => {
+  const makeItem = ([ name, desc, key, def, def2 ]) => {
     const el = document.createElement('div');
 
     const nameEl = document.createElement('div');
@@ -228,18 +230,19 @@ b {
     const descEl = document.createElement('div');
     descEl.innerHTML = desc;
 
+    const lookup = {
+      'performance': 'perf',
+      'battery life': 'battery',
+      'balanced': 'balanced'
+    };
+
     const switchEl = typeof def === 'boolean' ? makeSwitch((v) => {
       config[key] = v;
       Native.set(config);
     }, config[key] ?? def) : makeDropdown((v) => {
-      const lookup = {
-        'performance': 'perf',
-        'battery life': 'battery'
-      };
-
       config[key] = lookup[v] ?? v;
       Native.set(config);
-    }, def);
+    }, def, Object.keys(lookup)[Object.values(lookup).indexOf(def2)]);
 
     nameEl.append(switchEl);
     el.append(nameEl, descEl);

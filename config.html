@@ -380,7 +380,7 @@
     container.appendChild(monacoContainer);
 
     window.editor = monaco.editor.create(monacoContainer, {
-      value: config.css ?? `/* Add your own Custom CSS here.
+      value: config.css || `/* Add your own Custom CSS here.
 Have a theme you want to use? Copy and paste it here. */`,
       language: 'css',
       theme: 'vs-dark',

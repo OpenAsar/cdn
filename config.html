@@ -367,10 +367,10 @@
     container.innerHTML = '';
 
     if (!window.monaco) {
-      await loadScript('/node_modules/monaco-editor/min/vs/loader.js');
+      await loadScript('monaco-editor/min/vs/loader.js');
       // await new Promise(res => setTimeout(res, 500));
 
-      require.config({ paths: { vs: 'node_modules/monaco-editor/min/vs' } });
+      require.config({ paths: { vs: 'monaco-editor/min/vs' } });
 			await new Promise(res => require(['vs/editor/editor.main'], res));
     }
 

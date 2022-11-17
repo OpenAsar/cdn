@@ -372,8 +372,10 @@
       // await new Promise(res => setTimeout(res, 500));
 
       require.config({ paths: { vs: 'monaco-editor/min/vs' } });
-			await new Promise(res => require(['vs/editor/editor.main'], res));
+      await new Promise(res => require(['vs/editor/editor.main'], res));
     }
+
+    if (!t_theming.classList.contains('active')) return;
 
     const monacoContainer = document.createElement('div');
     monacoContainer.style.width = '100%';

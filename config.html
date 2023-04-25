@@ -224,8 +224,19 @@
     font-weight: 700;
   }
 
-  header > div, .switch, button, select, option, .monaco-editor {
+  header > div, .switch, button, select, option, .monaco-editor, input {
     -webkit-app-region: none;
+  }
+
+  input[type="text"] {
+    background: var(--background-secondary);
+    border: 2px solid var(--background-tertiary);
+    padding: 3px;
+    color: var(--header-primary);
+    margin-top: 4px;
+    font-weight: 500;
+    width: 90vw;
+    border-radius: 4px;
   }
 </style>
 
@@ -252,6 +263,7 @@
     [ 'No Track', 'Disables Discord\'s added tracking / analytics / telemetry (Sentry, science)', 'noTrack', true ],
     [ 'Disable Typing', 'Disables showing other people that you are typing', 'noTyping', false ],
     [ 'Splash Theming', 'Themes splash screen the same as your client mod\'s', 'themeSync', true ],
+    [ 'Custom Flags', 'Add your custom flags here (separated by spaces)', 'customFlags', '' ],
     experimental([ 'Quickstart', 'Makes Discord start faster by skipping some steps like update checking on start', 'quickstart', false ]),
     experimental([ 'Multi Instance', 'Allows Discord to have multiple instances / windows open at once', 'multiInstance', false ]),
   ];
@@ -283,6 +295,21 @@
     switchEl.appendChild(switchDivChildEl);
 
     return switchEl;
+  };
+
+  const makeTextInput = (listener, initial = '', disabled = false) => {
+    const textInputEl = document.createElement('input');
+    textInputEl.type = 'text';
+    textInputEl.value = initial;
+    textInputEl.disabled = disabled;
+
+    textInputEl.oninput = disabled ? () => {} : () => {
+      const value = textInputEl.value;
+
+      listener(value);
+    };
+
+    return textInputEl;
   };
 
   const makeDropdown = (listener, opts, def) => {
@@ -323,15 +350,25 @@
       'balanced': 'balanced'
     };
 
-    const switchEl = typeof def === 'boolean' ? makeSwitch((v) => {
-      config[key] = v;
-      Native.set(config);
-    }, config[key] ?? def, def2 === true) : makeDropdown(typeof key === 'function' ? key : v => {
-      config[key] = lookup[v] ?? v;
-      Native.set(config);
-    }, def, key === 'cmdPreset' ? Object.keys(lookup)[Object.values(lookup).indexOf(def2)] : def2 );
+    let inputEl;
+    if (typeof def === 'boolean') {
+      inputEl = makeSwitch((v) => {
+        config[key] = v;
+        Native.set(config);
+      }, config[key] ?? def, def2 === true);
+    } else if (Array.isArray(def)) {
+      inputEl = makeDropdown(typeof key === 'function' ? key : v => {
+        config[key] = lookup[v] ?? v;
+        Native.set(config);
+      }, def, key === 'cmdPreset' ? Object.keys(lookup)[Object.values(lookup).indexOf(def2)] : def2 );
+    } else {
+      inputEl = makeTextInput((v) => {
+        config[key] = v;
+        Native.set(config);
+      }, config[key] ?? def, def2 === true);
+    }
 
-    nameEl.append(switchEl);
+    nameEl.append(inputEl);
     el.append(nameEl, descEl);
 
     return el;

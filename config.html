@@ -355,11 +355,29 @@
     await new Promise(res => el.onload = res);
   };
 
+  const secret = () => {
+    if (!confirm('Opt in to skunkworks builds?')) return;
+    Native.set('skunkworks');
+  };
+
+  let clicks = 0, start = -Infinity;
   t_settings.onclick = () => {
     document.querySelectorAll('[id^="t_"]').forEach(x => x.classList.remove('active'));
     t_settings.classList.add('active');
 
     buildSettings(mainSettings);
+
+    const now = Date.now();
+    if (now - start > 5000) {
+      start = now;
+      clicks = 0;
+    }
+
+    if (++clicks === 10) {
+      clicks = 0;
+      start = -Infinity;
+      secret();
+    }
   };
   t_theming.onclick = async () => {
     document.querySelectorAll('[id^="t_"]').forEach(x => x.classList.remove('active'));
